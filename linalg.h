@@ -146,21 +146,35 @@ typedef struct {
     float m[2][2];
 } Mat2D;
 
-void fillMat2D(V2D* v, V2D* v2, Mat2D* m) {
-    memset(m, 0, sizeof(Mat2D));
-    m->m[0][0] = v->f[0];
-    m->m[1][0] = v2->f[0];
-    m->m[0][1] = v->f[1];
-    m->m[1][1] = v2->f[1];
+void cart2bar(V2D* v1, V2D* v2, V2D* v3, Mat2D* m) {
+    m->m[0][0] = v1->f[0] - v3->f[0];
+    m->m[0][1] = v2->f[0] - v3->f[0];
+    m->m[1][0] = v1->f[1] - v3->f[1];
+    m->m[1][1] = v2->f[1] - v3->f[1];
 }
 
 float detMat2D(Mat2D* m) {
     return m->m[0][0] * m->m[1][1] - m->m[0][1] * m->m[1][0];
 }
 
-void subV2D(V2D* v, V2D* v2, V2D* o) {
-    o->f[0] = v->f[0] - v2->f[0];
-    o->f[1] = v->f[1] - v2->f[1];
+void invMat2D(Mat2D* m, Mat2D* o) {
+    Mat2D inv = {0};
+    float invDet = 1.0 / detMat2D(m);
+    inv.m[0][0] = invDet * m->m[1][1];
+    inv.m[0][1] = invDet * (-1.0f) * m->m[0][1];
+    inv.m[1][0] = invDet * (-1.0f) * m->m[1][0];
+    inv.m[1][1] = invDet * m->m[0][0];
+    *o = inv;
+}
+
+void subV2D(V2D* v1, V2D* v2, V2D* o) {
+    o->f[0] = v1->f[0] - v2->f[0];
+    o->f[1] = v1->f[1] - v2->f[1];
+}
+
+void multM2DV2D(Mat2D* m, V2D* v, V2D* o) {
+    o->f[0] = m->m[0][0] * v->f[0] + m->m[0][1] * v->f[1];
+    o->f[1] = m->m[1][0] * v->f[0] + m->m[1][1] * v->f[1];
 }
 
 #endif /* LINALG_H */
