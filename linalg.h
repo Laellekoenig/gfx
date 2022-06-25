@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 
 typedef struct {
     float f[3];
@@ -175,6 +176,17 @@ void subV2D(V2D* v1, V2D* v2, V2D* o) {
 void multM2DV2D(Mat2D* m, V2D* v, V2D* o) {
     o->f[0] = m->m[0][0] * v->f[0] + m->m[0][1] * v->f[1];
     o->f[1] = m->m[1][0] * v->f[0] + m->m[1][1] * v->f[1];
+}
+
+void multElementV2D(V2D* v1, V2D* v2, V2D* o) {
+    o->f[0] = v1->f[0] * v2->f[0];
+    o->f[1] = v1->f[1] * v2->f[1];
+}
+
+void multElementV3D(V3D* v1, V3D* v2, V3D* o) {
+    o->f[0] = v1->f[0] * v2->f[0];
+    o->f[1] = v1->f[1] * v2->f[1];
+    o->f[2] = v1->f[2] * v2->f[2];
 }
 
 #endif /* LINALG_H */

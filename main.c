@@ -31,12 +31,12 @@ void render() {
     // transforms
     Mat4D translate, scale, rotate, rotate2 = {0};
     translationMat(&translate, -0.5, -0.5, -0.5);
-    scalingMat(&scale, 100, 100, 100);
+    scalingMat(&scale, 150, 150, 150);
     yRotationMat(&rotate, theta);
-    /*xRotationMat(&rotate2, PI / 8);*/
+    xRotationMat(&rotate2, PI / 8);
 
     multMM4(&scale, &rotate, &scale);
-    /*multMM4(&scale, &rotate2, &scale);*/
+    multMM4(&scale, &rotate2, &scale);
     multMM4(&scale, &translate, &scale);
 
     // apply to mesh
