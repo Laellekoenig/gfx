@@ -5,7 +5,6 @@
 #include "mesh.h"
 #include "shapes.h"
 #include <math.h>
-#include <float.h>
 
 #define WIDTH 400
 #define HEIGHT 400
@@ -44,8 +43,6 @@ void draw2DTri(HomoTri* tri, Color (*img)[WIDTH], float (*zBuff)[WIDTH]) {
         translateOrigin(&v[i]);
     }
 
-    float avgZ = (v[0].f[2] + v[1].f[2] + v[2].f[2]) / 3.0f;
-
     // find bounding box
     float minX = v[0].f[0];
     if (minX > v[1].f[0]) minX = v[1].f[0];
@@ -81,14 +78,27 @@ void draw2DTri(HomoTri* tri, Color (*img)[WIDTH], float (*zBuff)[WIDTH]) {
             if (bar.f[0] < 0 || bar.f[1] < 0 || bar.f[2] < 0) continue;
 
             // z buffer
-            float z = bar.f[0] * v[0].f[2] + bar.f[1] * v[1].f[2] + bar.f[2] * v[2].f[2];
+            float z = bar.f[0] * v[0].f[2] + 
+                      bar.f[1] * v[1].f[2] +
+                      bar.f[2] * v[2].f[2];
+
             if (z > zBuff[x][y]) continue;
             zBuff[x][y] = z;
 
             // interpolate and set color
-            V3D col = {{255, 255, 255}};
-            multElementV3D(&bar, &col, &col);
-            img[x][y] = (Color) {col.f[0], col.f[1], col.f[2], 255};
+            unsigned char red = tri->c[0].r * bar.f[0] +
+                                tri->c[1].r * bar.f[1] +
+                                tri->c[2].r * bar.f[2];
+
+            unsigned char green = tri->c[0].g * bar.f[0] +
+                                  tri->c[1].g * bar.f[1] +
+                                  tri->c[2].g * bar.f[2];
+
+            unsigned char blue = tri->c[0].b * bar.f[0] +
+                                 tri->c[1].b * bar.f[1] +
+                                 tri->c[2].b * bar.f[2];
+
+            img[x][y] = (Color) {red, green, blue, 255};
         }
     }
 }

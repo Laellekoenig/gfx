@@ -6,6 +6,14 @@
 #include <stdio.h>
 
 typedef struct {
+    float f[2];
+} V2D;
+
+typedef struct {
+    float m[2][2];
+} Mat2D;
+
+typedef struct {
     float f[3];
 } V3D;
 
@@ -19,9 +27,10 @@ typedef struct {
 
 void dehomo(V4D* v, V3D* o) {
     if (v->f[3] != 0) {
-        v->f[0] /= v->f[3];
-        v->f[1] /= v->f[3];
-        v->f[2] /= v->f[3];
+        o->f[0] = v->f[0] / v->f[3];
+        o->f[1] = v->f[1] / v->f[3];
+        o->f[2] = v->f[2] / v->f[3];
+        return;
     }
 
     o->f[0] = v->f[0];
@@ -138,14 +147,6 @@ void multMM4(Mat4D* m, Mat4D* m2, Mat4D* o) {
 
     *o = temp;
 }
-
-typedef struct {
-    float f[2];
-} V2D;
-
-typedef struct {
-    float m[2][2];
-} Mat2D;
 
 void cart2bar(V2D* v1, V2D* v2, V2D* v3, Mat2D* m) {
     m->m[0][0] = v1->f[0] - v3->f[0];

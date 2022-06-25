@@ -5,6 +5,7 @@
 
 typedef struct {
     V4D v[3];
+    Color c[3];
 } HomoTri;
 
 typedef struct VoidEntry VoidEntry;
@@ -51,7 +52,9 @@ void matMulMesh(VoidMesh* mesh, Mat4D* mat) {
     VoidEntry* current = mesh->head;
     while(current != NULL) {
         HomoTri* currentTri = (HomoTri*) current->item;
-        HomoTri multTri = {0};
+        HomoTri multTri = {};
+        memcpy(&multTri, currentTri, sizeof(HomoTri));
+
         for (int i = 0; i < 3; i++) {
             multMV4(mat, &currentTri->v[i], &multTri.v[i]);
         }

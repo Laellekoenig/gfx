@@ -6,25 +6,30 @@
 
 void pyramidMesh(VoidMesh* mesh) {
     // sides
-    
     HomoTri* a = malloc(sizeof(HomoTri));
-    *a = (HomoTri) {{{0, 0, 0, 1}, {0.5, 1, 0.5, 1}, {1, 0, 0, 1}}};
+    *a = (HomoTri) {{{0, 0, 0, 1}, {0.5, 1, 0.5, 1}, {1, 0, 0, 1}},
+                    {RED, WHITE, GREEN}};
 
     HomoTri* b = malloc(sizeof(HomoTri));
-    *b = (HomoTri) {{{0, 0, 1, 1}, {0.5, 1, 0.5, 1}, {0, 0, 0, 1}}};
+    *b = (HomoTri) {{{0, 0, 1, 1}, {0.5, 1, 0.5, 1}, {0, 0, 0, 1}},
+                    {WHITE, WHITE, RED}};
 
     HomoTri* c = malloc(sizeof(HomoTri));
-    *c = (HomoTri) {{{1, 0, 1, 1}, {0.5, 1, 0.5, 1}, {0, 0, 1, 1}}};
+    *c = (HomoTri) {{{1, 0, 1, 1}, {0.5, 1, 0.5, 1}, {0, 0, 1, 1}},
+                    {BLUE, WHITE, WHITE}};
 
     HomoTri* d = malloc(sizeof(HomoTri));
-    *d = (HomoTri) {{{1, 0, 0, 1}, {0.5, 1, 0.5, 1}, {1, 0, 1, 1}}};
+    *d = (HomoTri) {{{1, 0, 0, 1}, {0.5, 1, 0.5, 1}, {1, 0, 1, 1}},
+                    {GREEN, WHITE, BLUE}};
 
     //base
     HomoTri* e = malloc(sizeof(HomoTri));
-    *e = (HomoTri) {{{0, 0, 0, 1}, {1, 0, 0, 1}, {0, 0, 1, 1}}};
+    *e = (HomoTri) {{{0, 0, 0, 1}, {1, 0, 0, 1}, {0, 0, 1, 1}},
+                    {RED, GREEN, WHITE}};
 
     HomoTri* f = malloc(sizeof(HomoTri));
-    *f = (HomoTri) {{{1, 0, 1, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}}};
+    *f = (HomoTri) {{{1, 0, 1, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}},
+                    {BLUE, WHITE, GREEN}};
 
     add2Mesh(mesh, (void*) a);
     add2Mesh(mesh, (void*) b);
