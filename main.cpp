@@ -1,20 +1,23 @@
 #include <raylib.h>
 #include "lib/mesh.h"
-#include <iostream>
 
-PyramidMesh mesh;
+TriMesh mesh;
 float theta = 0.015;
-M4D rotate;
+M4D rotate_x;
+M4D rotate_y;
 
 void init() {
-    mesh = PyramidMesh();
+    //mesh = PyramidMesh();
+    mesh = CubeMesh();
     M4D transform = ScalingM4D(200, 200, 200) * TranslationM4D(-0.5, -0.5, -0.5);
     mesh *= transform;
-    rotate = RotationM4D(theta, Y);
+
+    rotate_x = RotationM4D(0.5 * theta, X);
+    rotate_y = RotationM4D(theta, Y);
 }
 
 void update() {
-    mesh *= rotate;
+    mesh *= rotate_x * rotate_y;
 }
 
 void render() {

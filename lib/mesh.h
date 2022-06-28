@@ -20,4 +20,9 @@ class PyramidMesh: public TriMesh {
         PyramidMesh();
 };
 
+class CubeMesh: public TriMesh {
+    public:
+        CubeMesh();
+};
+
 #endif // MESH_H

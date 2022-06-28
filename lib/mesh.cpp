@@ -48,3 +48,43 @@ PyramidMesh::PyramidMesh() {
     this->mesh.push_back(Triangle(V4D(1, 0, 1), V4D(0, 0, 1), V4D(1, 0, 0),
                                   white, white, white));
 }
+
+CubeMesh::CubeMesh() {
+    Color white = {255, 255, 255, 255};
+
+    // front
+    this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(0, 1, 0), V4D(1, 1, 0),
+                                  white, white, white));
+    this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 1, 0), V4D(1, 0, 0),
+                                  white, white, white));
+
+    // left
+    this->mesh.push_back(Triangle(V4D(0, 0, 1), V4D(0, 1, 1), V4D(0, 1, 0),
+                                  white, white, white));
+    this->mesh.push_back(Triangle(V4D(0, 0, 1), V4D(0, 1, 0), V4D(0, 0, 0),
+                                  white, white, white));
+
+    // right
+    this->mesh.push_back(Triangle(V4D(1, 0, 0), V4D(1, 1, 0), V4D(1, 1, 1),
+                                  white, white, white));
+    this->mesh.push_back(Triangle(V4D(1, 0, 0), V4D(1, 1, 1), V4D(1, 0, 1),
+                                  white, white, white));
+
+    // back
+    this->mesh.push_back(Triangle(V4D(1, 0, 1), V4D(1, 1, 1), V4D(0, 1, 1),
+                                  white, white, white));
+    this->mesh.push_back(Triangle(V4D(1, 0, 1), V4D(0, 1, 1), V4D(0, 0, 1),
+                                  white, white, white));
+
+    // top
+    this->mesh.push_back(Triangle(V4D(0, 1, 0), V4D(0, 1, 1), V4D(1, 1, 1),
+                                  white, white, white));
+    this->mesh.push_back(Triangle(V4D(0, 1, 0), V4D(1, 1, 1), V4D(1, 1, 0),
+                                  white, white, white));
+
+    // bottom
+    this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 0, 1), V4D(0, 0, 1),
+                                  white, white, white));
+    this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 0, 0), V4D(1, 0, 1),
+                                  white, white, white));
+}
