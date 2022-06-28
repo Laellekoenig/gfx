@@ -1,3 +1,3 @@
-build:
-	cc main.c `pkg-config --libs --cflags raylib` -o lib_gfx
-	./lib_gfx
+compile:
+	g++ main.cpp `pkg-config --libs --cflags raylib` lib/gfx.cpp lib/mesh.cpp -o gfx
+	./gfx

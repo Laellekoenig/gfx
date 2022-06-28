@@ -2,8 +2,6 @@
 #include <math.h>
 #include "gfx.h"
 
-#define HEIGHT 400
-#define WIDTH 400
 #define FPS 60
 
 float theta;
@@ -29,7 +27,7 @@ void render() {
     pyramidMesh(&mesh);
 
     // transforms
-    Mat4D translate, scale, rotate, rotate2 = {0};
+    Mat4D translate, scale, rotate, rotate2, proj = {0};
     translationMat(&translate, -0.5, -0.5, -0.5);
     scalingMat(&scale, 150, 150, 150);
     yRotationMat(&rotate, theta);

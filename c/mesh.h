@@ -31,6 +31,7 @@ void add2Mesh(VoidMesh* mesh, void* item) {
     VoidEntry* current = mesh->head;
     while (current->next != NULL) current = current->next;
     current->next = newEntry;
+
 }
 
 void clearMesh(VoidMesh* mesh) {
