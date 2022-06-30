@@ -1,28 +1,28 @@
 #include "mesh.h"
+#include <limits>
+#include <iostream>
+#include <string>
+#include <array>
 
-TriMesh::TriMesh() {
+Mesh::Mesh() {
     this->mesh = std::vector<Triangle>();
 }
 
-void TriMesh::add(Triangle t) {
+void Mesh::add(Triangle t) {
     this->mesh.push_back(t);
 }
 
-void TriMesh::render() {
+void Mesh::render(SDL_Renderer* renderer) {
+    std::array<float, WIDTH * HEIGHT> z_buffer;
+    z_buffer.fill(FLT_MAX);
+
     for (std::vector<Triangle>::iterator it = this->mesh.begin();
             it != this->mesh.end(); ++it) {
-        it->render();
+        it->render(renderer, z_buffer);
     }
 }
 
-void TriMesh::render_projection() {
-    for (std::vector<Triangle>::iterator it = this->mesh.begin();
-            it != this->mesh.end(); ++it) {
-        it->render_projection();
-    }
-}
-
-void TriMesh::operator*=(const M4D& m) {
+void Mesh::operator*=(const M4D& m) {
     for (std::vector<Triangle>::iterator it = this->mesh.begin();
             it != this->mesh.end(); ++it) {
         *it = m * (*it);
@@ -30,43 +30,49 @@ void TriMesh::operator*=(const M4D& m) {
 }
 
 PyramidMesh::PyramidMesh() {
-    Color white = {255, 255, 255, 255};
+    RGB red = RGB(255, 0, 0);
+    RGB green = RGB(0, 255, 0);
+    RGB blue = RGB(0, 0, 255);
+    RGB white = RGB(255, 255, 255);
 
     // sides
     this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(0.5, 1, 0.5), V4D(1, 0, 0),
-                                  white, white, white));
+                                  red, white, green));
     this->mesh.push_back(Triangle(V4D(0, 0, 1), V4D(0.5, 1, 0.5), V4D(0, 0, 0),
-                                  white, white, white));
+                                  blue, white, red));
     this->mesh.push_back(Triangle(V4D(1, 0, 1), V4D(0.5, 1, 0.5), V4D(0, 0, 1),
-                                  white, white, white));
+                                  white, white, blue));
     this->mesh.push_back(Triangle(V4D(1, 0, 0), V4D(0.5, 1, 0.5), V4D(1, 0, 1),
-                                  white, white, white));
+                                  green, white, white));
 
     // bottom
     this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 0, 0), V4D(0, 0, 1),
-                                  white, white, white));
+                                  red, green, blue));
     this->mesh.push_back(Triangle(V4D(1, 0, 1), V4D(0, 0, 1), V4D(1, 0, 0),
-                                  white, white, white));
+                                  white, blue, green));
 }
 
 CubeMesh::CubeMesh() {
-    Color white = {255, 255, 255, 255};
+    RGB red = RGB(255, 0, 0);
+    RGB green = RGB(0, 255, 0);
+    RGB blue = RGB(0, 0, 255);
+    RGB white = RGB(255, 255, 255);
 
     // front
     this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(0, 1, 0), V4D(1, 1, 0),
-                                  white, white, white));
+                                  red, green, blue));
     this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 1, 0), V4D(1, 0, 0),
-                                  white, white, white));
+                                  red, blue, white));
 
     // left
     this->mesh.push_back(Triangle(V4D(0, 0, 1), V4D(0, 1, 1), V4D(0, 1, 0),
-                                  white, white, white));
+                                  white, white, green));
     this->mesh.push_back(Triangle(V4D(0, 0, 1), V4D(0, 1, 0), V4D(0, 0, 0),
-                                  white, white, white));
+                                  white, green, red));
 
     // right
     this->mesh.push_back(Triangle(V4D(1, 0, 0), V4D(1, 1, 0), V4D(1, 1, 1),
-                                  white, white, white));
+                                  white, blue, white));
     this->mesh.push_back(Triangle(V4D(1, 0, 0), V4D(1, 1, 1), V4D(1, 0, 1),
                                   white, white, white));
 
@@ -78,13 +84,13 @@ CubeMesh::CubeMesh() {
 
     // top
     this->mesh.push_back(Triangle(V4D(0, 1, 0), V4D(0, 1, 1), V4D(1, 1, 1),
-                                  white, white, white));
+                                  green, white, white));
     this->mesh.push_back(Triangle(V4D(0, 1, 0), V4D(1, 1, 1), V4D(1, 1, 0),
-                                  white, white, white));
+                                  green, white, blue));
 
     // bottom
     this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 0, 1), V4D(0, 0, 1),
-                                  white, white, white));
+                                  red, white, white));
     this->mesh.push_back(Triangle(V4D(0, 0, 0), V4D(1, 0, 0), V4D(1, 0, 1),
-                                  white, white, white));
+                                  red, white, white));
 }

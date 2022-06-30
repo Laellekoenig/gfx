@@ -2,25 +2,26 @@
 #define MESH_H
 
 #include <vector>
+#include <SDL2/SDL.h>
 #include "gfx.h"
 
-class TriMesh {
+class Mesh {
     public:
         std::vector<Triangle> mesh;
 
-        TriMesh();
+        Mesh();
         void add(Triangle t);
-        void render();
+        void render(SDL_Renderer* renderer);
         void render_projection();
         void operator*=(const M4D& m);
 };
 
-class PyramidMesh: public TriMesh {
+class PyramidMesh: public Mesh {
     public:
         PyramidMesh();
 };
 
-class CubeMesh: public TriMesh {
+class CubeMesh: public Mesh {
     public:
         CubeMesh();
 };

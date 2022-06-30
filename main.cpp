@@ -1,50 +1,61 @@
-#include <raylib.h>
-#include "lib/mesh.h"
+#include <SDL2/SDL.h>
+#include "mesh.h"
+#include <math.h>
 
-TriMesh mesh;
-float theta = 0.015;
-M4D rotate_x;
-M4D rotate_y;
+#define INTERVAL 16 // ~60 FPS
+
+SDL_Renderer* renderer;
+SDL_Window* window;
+unsigned int next_tick;
+Mesh pyramid;
+float theta;
 
 void init() {
-    //mesh = PyramidMesh();
-    mesh = CubeMesh();
-    M4D transform = ScalingM4D(200, 200, 200) * TranslationM4D(-0.5, -0.5, -0.5);
-    mesh *= transform;
-
-    rotate_x = RotationM4D(0.5 * theta, X);
-    rotate_y = RotationM4D(theta, Y);
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    theta = 0;
 }
 
 void update() {
-    mesh *= rotate_x * rotate_y;
+    pyramid = PyramidMesh();
+    M4D transform = ScalingM4D(200, 200, 200) *
+                    RotationM4D(theta, Y) *
+                    TranslationM4D(-0.5, -0.5, -0.5);
+    pyramid *= transform;
+    theta += 0.025;
+    if (theta > 2 * M_PI) theta = 0;
 }
 
-void render() {
-    BeginDrawing();
-    ClearBackground((Color) {0, 0, 0, 255});
-    mesh.render();
-    DrawFPS(0, 0);
-    EndDrawing();
+void render(SDL_Renderer* renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    pyramid.render(renderer);
+    SDL_RenderPresent(renderer);
 }
 
-void destroy() {
-
+unsigned int time_left() {
+    int now = SDL_GetTicks();
+    if (next_tick <= now) return 0;
+    return next_tick - now;
 }
 
 int main(int argc, char* argv[]) {
-    InitWindow(WIDTH, HEIGHT, "gfx++");
-    SetTargetFPS(60);
-
     init();
 
-    while (!WindowShouldClose()) {
+    SDL_Event event;
+    next_tick = SDL_GetTicks() + INTERVAL;
+    while (true) {
+        if (SDL_PollEvent(&event) && event.type == SDL_QUIT) break;
         update();
-        render();
+        render(renderer);
+        SDL_Delay(time_left());
+        next_tick += INTERVAL;
     }
 
-    CloseWindow();
-    destroy();
-
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
     return 0;
 }
