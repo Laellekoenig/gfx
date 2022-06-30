@@ -1,30 +1,26 @@
 #include "mesh.h"
 #include <limits>
-#include <iostream>
-#include <string>
 #include <array>
 
 Mesh::Mesh() {
-    this->mesh = std::vector<Triangle>();
+    mesh = std::vector<Triangle>();
 }
 
 void Mesh::add(Triangle t) {
-    this->mesh.push_back(t);
+    mesh.push_back(t);
 }
 
 void Mesh::render(SDL_Renderer* renderer) {
     std::array<float, WIDTH * HEIGHT> z_buffer;
     z_buffer.fill(FLT_MAX);
 
-    for (std::vector<Triangle>::iterator it = this->mesh.begin();
-            it != this->mesh.end(); ++it) {
-        it->render(renderer, z_buffer);
+    for (Triangle t : mesh) {
+        t.render(renderer, z_buffer);
     }
 }
 
-void Mesh::operator*=(const M4D& m) {
-    for (std::vector<Triangle>::iterator it = this->mesh.begin();
-            it != this->mesh.end(); ++it) {
+void Mesh::apply(const M4D& m) {
+    for (std::vector<Triangle>::iterator it = mesh.begin(); it != mesh.end(); it++) {
         *it = m * (*it);
     }
 }

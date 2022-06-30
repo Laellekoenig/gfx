@@ -12,8 +12,7 @@ class Mesh {
         Mesh();
         void add(Triangle t);
         void render(SDL_Renderer* renderer);
-        void render_projection();
-        void operator*=(const M4D& m);
+        void apply(const M4D& m);
 };
 
 class PyramidMesh: public Mesh {

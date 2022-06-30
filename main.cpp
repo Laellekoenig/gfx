@@ -23,7 +23,7 @@ void update() {
     M4D transform = ScalingM4D(200, 200, 200) *
                     RotationM4D(theta, Y) *
                     TranslationM4D(-0.5, -0.5, -0.5);
-    pyramid *= transform;
+    pyramid.apply(transform);
     theta += 0.025;
     if (theta > 2 * M_PI) theta = 0;
 }
