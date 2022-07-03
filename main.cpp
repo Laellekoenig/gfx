@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include "gfx.h"
 #include "mesh.h"
 #include <math.h>
 
@@ -21,7 +22,7 @@ void init() {
 void update() {
     pyramid = PyramidMesh();
     M4D transform = ScalingM4D(200, 200, 200) *
-                    RotationM4D(theta, Y) *
+                    RotationM4D(theta, Direction::Y) *
                     TranslationM4D(-0.5, -0.5, -0.5);
     pyramid.apply(transform);
     theta += 0.025;

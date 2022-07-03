@@ -38,7 +38,7 @@ class V4D {
 
         V4D();
         V4D(const float x, const float y, const float z, const float w = 1);
-        void dehomo();
+        V4D& dehomo();
         void translate_origin(const int width, const int height);
 };
 
@@ -59,10 +59,10 @@ class M2D {
         float c;
         float d;
 
-        M2D();
-        M2D(const float a, const float b, const float c, const float d);
+        M2D() : a{0}, b{0}, c{0}, d{0} {};
+        M2D(const float a, const float b, const float c, const float d) : a{a}, b{b}, c{c}, d{d} {};
         float det() const;
-        void inv();
+        M2D& inv();
         V2D operator*(const V2D& v) const;
 };
 

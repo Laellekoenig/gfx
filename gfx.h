@@ -3,12 +3,18 @@
 
 #include <SDL2/SDL.h>
 #include <array>
+#include "linalg.h"
 
 #define HEIGHT 600
 #define WIDTH 600
-#define X 0
-#define Y 1
-#define Z 2
+
+#define WHITE RGB(255, 255, 255)
+#define BLACK RGB(0, 0, 0)
+#define RED RGB(255, 0, 0)
+#define GREEN RGB(0, 255, 0)
+#define BLUE RGB(0, 0, 255)
+
+enum Direction {X, Y, Z};
 
 class Triangle;
 
@@ -18,83 +24,26 @@ class RGB {
         unsigned char g;
         unsigned char b;
 
-        RGB();
-        RGB(unsigned char r, unsigned char g, unsigned char b);
-        RGB operator*(const float& x) const;
+        RGB() : r{255}, g{255}, b{255} {};
+        RGB(const unsigned char r, const unsigned char g, const unsigned char b) : r{r}, g{g}, b{b} {};
+        RGB operator*(const float& c) const;
         RGB operator+(const RGB& other) const;
-};
-
-class V2D {
-    public:
-        float x;
-        float y;
-
-        V2D();
-        V2D(float x, float y);
-};
-
-class V3D {
-    public:
-        float x;
-        float y;
-        float z;
-
-        V3D();
-        V3D(float x, float y, float z);
-        void translate_origin();
-        void operator/=(const float x);
-};
-
-class V4D {
-    public:
-        float x;
-        float y;
-        float z;
-        float w;
-
-        V4D();
-        V4D(float x, float y, float z, float w = 1);
-        void dehomo();
-        void translate_origin();
-};
-
-class M2D {
-    public:
-        float a;
-        float b;
-        float c;
-        float d;
-
-        M2D();
-        M2D(float a, float b, float c, float d);
-        float det();
-        void inv();
-        V2D operator*(const V2D& v) const;
-};
-
-class M4D {
-    public:
-        float m[4][4];
-
-        M4D();
-        V4D operator*(const V4D& v) const;
-        Triangle operator*(const Triangle& v) const;
-        M4D operator*(const M4D& m) const;
+        RGB& operator+=(const RGB& other);
 };
 
 class TranslationM4D: public M4D {
     public:
-        TranslationM4D(float x, float y, float z);
+        TranslationM4D(const float x, const float y, const float z);
 };
 
 class ScalingM4D: public M4D {
     public:
-        ScalingM4D(float x, float y, float z);
+        ScalingM4D(const float x, const float y, const float z);
 };
 
 class RotationM4D: public M4D {
     public:
-        RotationM4D(float theta, int dir = 0);
+        RotationM4D(const float theta, const Direction dir = Direction::X);
 };
 
 class ProjectionM4D: public M4D {
