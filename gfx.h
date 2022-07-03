@@ -25,8 +25,11 @@ class RGB {
         unsigned char b;
 
         RGB() : r{255}, g{255}, b{255} {};
-        RGB(const unsigned char r, const unsigned char g, const unsigned char b) : r{r}, g{g}, b{b} {};
-        RGB operator*(const float& c) const;
+        RGB(const unsigned char r,
+            const unsigned char g,
+            const unsigned char b) : r{r}, g{g}, b{b} {};
+        RGB operator*(const float c) const;
+        RGB& operator*=(const float c);
         RGB operator+(const RGB& other) const;
         RGB& operator+=(const RGB& other);
 };
@@ -60,12 +63,18 @@ class Triangle {
         RGB cb;
         RGB cc;
 
-        Triangle(V4D a, V4D b, V4D c);
-        Triangle(V4D a, V4D b, V4D c, RGB ca, RGB cb, RGB cc);
-        void render(SDL_Renderer* renderer, std::array<float, WIDTH * HEIGHT>& z_buffer);
+        Triangle(const V4D a,
+                 const V4D b,
+                 const V4D c) : a{a}, b{b}, c{c}, ca{WHITE}, cb{WHITE}, cc{WHITE} {};
+        Triangle(const V4D a,
+                 const V4D b,
+                 const V4D c,
+                 const RGB ca,
+                 const RGB cb,
+                 const RGB cc) : a{a}, b{b}, c{c}, ca{ca}, cb{cb}, cc{cc} {};
         V3D to_barycentric(const V2D& p) const;
+        void render(SDL_Renderer* renderer,
+                    std::array<float, WIDTH * HEIGHT>& z_buffer);
 };
-
-V3D to_barycentric(const V3D& a, const V3D& b, const V3D& c, const V2D& p);
 
 #endif // GFX_H

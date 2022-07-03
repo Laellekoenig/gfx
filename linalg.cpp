@@ -1,59 +1,28 @@
 #include "linalg.h"
 #include "gfx.h"
+#include <algorithm>
 
-V2D::V2D() {
-    this->x = 0;
-    this->y = 0;
+V3D& V3D::translate_origin(const int width, const int height) {
+    x = x * -1 + width * 0.5;
+    y = y * -1 + height * 0.5;
+    return *this;
 }
 
-V2D::V2D(const float x, const float y) {
-    this->x = x;
-    this->y = y;
+V3D V3D::operator/(const float c) const {
+    return V3D(x / c, y / c, z / z);
 }
 
-V3D::V3D() {
-    this->x = 0;
-    this->y = 0;
-    this->z = 0;
-}
-
-V3D::V3D(const float x, const float y, const float z) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-}
-
-void V3D::translate_origin(const int width, const int height) {
-    this->x = this->x * -1 + width * 0.5;
-    this->y = this->y * -1 + height * 0.5;
-}
-
-V3D V3D::operator/(const float c) {
-    return V3D(this->x / c, this->y / c, this->z / z);
-}
-
-void V3D::operator/=(const float c) {
-    *this = *this / c;
+V3D& V3D::operator/=(const float c) {
+    x /= c;
+    y /= c;
+    z /= c;
+    return *this;
 }
 
 void V3D::operator=(const V3D& other) {
-    this->x = other.x;
-    this->y = other.y;
-    this->z = other.z;
-}
-
-V4D::V4D() {
-    this->x = 0;
-    this->y = 0;
-    this->z = 0;
-    this->w = 1;
-}
-
-V4D::V4D(const float x, const float y, const float z, const float w) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-    this->w = w;
+    x = other.x;
+    y = other.y;
+    z = other.z;
 }
 
 V4D& V4D::dehomo() {
@@ -66,9 +35,10 @@ V4D& V4D::dehomo() {
     return *this;
 }
 
-void V4D::translate_origin(const int height, const int width) {
+V4D& V4D::translate_origin(const int height, const int width) {
     x = x * -1 + width * 0.5;
     y = y * -1 + height * 0.5;
+    return *this;
 }
 
 M4D::M4D() {
@@ -127,20 +97,15 @@ M2D& M2D::inv() {
     float det = this->det();
 
     if (det == 0) {
-        a = NAN;
-        b = NAN;
-        c = NAN;
-        d = NAN;
+        a = b = c = d = NAN;
         return *this;
     }
 
-    det = 1.0 / det;
-    float temp = a;
-
-    a = det * d;
-    b *= -1 * det;
-    c *= -1 * det;
-    d = det * temp;
+    std::swap(a, d);
+    a /= det;
+    b /= -det;
+    c /= -det;
+    d /= det;
 
     return *this;
 }

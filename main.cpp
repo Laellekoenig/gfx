@@ -30,9 +30,12 @@ void update() {
 }
 
 void render(SDL_Renderer* renderer) {
+    // clear background black
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    // render mesh
     pyramid.render(renderer);
+    // display
     SDL_RenderPresent(renderer);
 }
 

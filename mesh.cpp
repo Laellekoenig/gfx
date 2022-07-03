@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include "gfx.h"
 #include <limits>
 #include <array>
 
@@ -14,15 +15,11 @@ void Mesh::render(SDL_Renderer* renderer) {
     std::array<float, WIDTH * HEIGHT> z_buffer;
     z_buffer.fill(FLT_MAX);
 
-    for (Triangle t : mesh) {
-        t.render(renderer, z_buffer);
-    }
+    for (Triangle t : mesh) t.render(renderer, z_buffer);
 }
 
 void Mesh::apply(const M4D& m) {
-    for (std::vector<Triangle>::iterator it = mesh.begin(); it != mesh.end(); it++) {
-        *it = m * (*it);
-    }
+    for (Triangle& t : mesh) t = m * t;
 }
 
 PyramidMesh::PyramidMesh() {

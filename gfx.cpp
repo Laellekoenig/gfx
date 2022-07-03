@@ -1,9 +1,18 @@
 #include "gfx.h"
 #include <math.h>
-#include <limits.h>
 
-RGB RGB::operator*(const float& c) const {
+// 2D coordinates to 1D array index
+#define TO_INDEX(X, Y) (X + Y * WIDTH)
+
+RGB RGB::operator*(const float c) const {
     return RGB(r * c, g * c, b * c);
+}
+
+RGB& RGB::operator*=(const float c) {
+    r *= c;
+    g *= c;
+    b *= c;
+    return *this;
 }
 
 RGB RGB::operator+(const RGB& other) const {
@@ -78,58 +87,10 @@ ProjectionM4D::ProjectionM4D() {
     data[15] = 0;
 }
 
-Triangle::Triangle(V4D a, V4D b, V4D c) {
-    this->a = a;
-    this->b = b;
-    this->c = c;
-    this->ca = RGB(255, 255, 255);
-    this->cb = RGB(255, 255, 255);
-    this->cc = RGB(255, 255, 255);
-}
-
-Triangle::Triangle(V4D a, V4D b, V4D c, RGB ca, RGB cb, RGB cc) {
-    this->a = a;
-    this->b = b;
-    this->c = c;
-    this->ca = ca;
-    this->cb = cb;
-    this->cc = cc;
-}
-
-void Triangle::render(SDL_Renderer* renderer,
-                      std::array<float, WIDTH * HEIGHT>& z_buffer) {
-    this->a.dehomo();
-    this->b.dehomo();
-    this->c.dehomo();
-
-    this->a.translate_origin(WIDTH, HEIGHT);
-    this->b.translate_origin(WIDTH, HEIGHT);
-    this->c.translate_origin(WIDTH, HEIGHT);
-
-    float min_x = fmin(this->a.x, fmin(this->b.x, this->c.x));
-    float max_x = fmax(this->a.x, fmax(this->b.x, this->c.x));
-    float min_y = fmin(this->a.y, fmin(this->b.y, this->c.y));
-    float max_y = fmax(this->a.y, fmax(this->b.y, this->c.y));
-
-    for (int y = min_y; y <= max_y; y++) {
-        for (int x = min_x; x <= max_x; x++) {
-            V3D bar = this->to_barycentric(V2D(x, y));
-            if (bar.x < 0 || bar.y < 0 || bar.z < 0) continue;
-            RGB color = this->ca * bar.x + this->cb * bar.y + this->cc * bar.z;
-            float z = this->a.z * bar.x + this->b.z * bar.y + this->c.z * bar.z;
-            if (z < z_buffer[x + y * WIDTH]) {
-                z_buffer[x + y * WIDTH] = z;
-                SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-                SDL_RenderDrawPoint(renderer, x, y);
-            }
-        }
-    }
-}
-
 V3D Triangle::to_barycentric(const V2D& p) const {
-    V2D r = V2D(p.x - this->c.x, p.y - this->c.y);
-    M2D cart2bar = M2D(this->a.x - this->c.x, this->b.x - this->c.x,
-                       this->a.y - this->c.y, this->b.y - this->c.y);
+    V2D r(p.x - c.x, p.y - c.y);
+    M2D cart2bar(a.x - c.x, b.x - c.x,
+                 a.y - c.y, b.y - c.y);
     cart2bar.inv();
 
     if (isnan(cart2bar.a)) return V3D(-1, -1, -1);
@@ -137,17 +98,39 @@ V3D Triangle::to_barycentric(const V2D& p) const {
     return V3D(lambdas.x, lambdas.y, 1 - lambdas.x - lambdas.y);
 }
 
-V3D to_barycentric(const V3D& a, const V3D& b, const V3D& c, const V2D& p) {
-    V2D r = V2D(p.x - c.x, p.y - c.y);
-    M2D cart2bar = M2D(a.x - c.x, b.x - c.x,
-                       a.y - c.y, b.y - c.y);
-    cart2bar.inv();
+void Triangle::render(SDL_Renderer* renderer,
+                      std::array<float, WIDTH * HEIGHT>& z_buffer) {
+    // get pixel coordinates
+    a.dehomo();
+    b.dehomo();
+    c.dehomo();
 
-    // check if matrix contains NAN (due to inverse)
-    if (isnan(cart2bar.a)) {
-        return V3D(-1, -1, -1);
+    a.translate_origin(WIDTH, HEIGHT);
+    b.translate_origin(WIDTH, HEIGHT);
+    c.translate_origin(WIDTH, HEIGHT);
+
+    // find bounding box
+    float min_x = fmin(a.x, fmin(b.x, c.x));
+    float max_x = fmax(a.x, fmax(b.x, c.x));
+    float min_y = fmin(a.y, fmin(b.y, c.y));
+    float max_y = fmax(a.y, fmax(b.y, c.y));
+
+    for (int y = min_y; y <= max_y; y++) {
+        for (int x = min_x; x <= max_x; x++) {
+            // check if point is in triangle
+            V3D bar = this->to_barycentric(V2D(x, y));
+            if (bar.x < 0 || bar.y < 0 || bar.z < 0) continue;
+
+            // check z buffer
+            float z = a.z * bar.x + b.z * bar.y + c.z * bar.z;
+            if (z < z_buffer[TO_INDEX(x, y)]) {
+                z_buffer[TO_INDEX(x, y)] = z;
+
+                // interpolate color
+                RGB color = ca * bar.x + cb * bar.y + cc * bar.z;
+                SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
+                SDL_RenderDrawPoint(renderer, x, y);
+            }
+        }
     }
-
-    V2D lambdas = cart2bar * r;
-    return V3D(lambdas.x, lambdas.y, 1.0 - lambdas.x - lambdas.y);
 }

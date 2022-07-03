@@ -11,8 +11,8 @@ class V2D {
         float x;
         float y;
 
-        V2D();
-        V2D(const float x, const float y);
+        V2D() : x{0}, y{0} {};
+        V2D(const float x, const float y) : x{x}, y{y} {};
 };
 
 class V3D {
@@ -21,11 +21,11 @@ class V3D {
         float y;
         float z;
 
-        V3D();
-        V3D(const float x, const float y, const float z);
-        void translate_origin(const int width, const int height);
-        V3D operator/(const float c);
-        void operator/=(const float c);
+        V3D() : x{0}, y{0}, z{0} {};
+        V3D(const float x, const float y, const float z) : x{x}, y{y}, z{z} {};
+        V3D& translate_origin(const int width, const int height);
+        V3D operator/(const float c) const;
+        V3D& operator/=(const float c);
         void operator=(const V3D& other);
 };
 
@@ -36,10 +36,13 @@ class V4D {
         float z;
         float w;
 
-        V4D();
-        V4D(const float x, const float y, const float z, const float w = 1);
+        V4D() : x{0}, y{0}, z{0}, w{1} {};
+        V4D(const float x,
+            const float y,
+            const float z,
+            const float w = 1) : x{x}, y{y}, z{z}, w{w} {};
         V4D& dehomo();
-        void translate_origin(const int width, const int height);
+        V4D& translate_origin(const int width, const int height);
 };
 
 class M4D {
@@ -60,7 +63,10 @@ class M2D {
         float d;
 
         M2D() : a{0}, b{0}, c{0}, d{0} {};
-        M2D(const float a, const float b, const float c, const float d) : a{a}, b{b}, c{c}, d{d} {};
+        M2D(const float a,
+            const float b,
+            const float c,
+            const float d) : a{a}, b{b}, c{c}, d{d} {};
         float det() const;
         M2D& inv();
         V2D operator*(const V2D& v) const;
