@@ -32,6 +32,22 @@ class RGB {
         RGB& operator*=(const float c);
         RGB operator+(const RGB& other) const;
         RGB& operator+=(const RGB& other);
+        uint to_int() const;
+};
+
+class Image {
+    private:
+        std::mutex draw_mutex;
+
+    public:
+        std::array<float, WIDTH * HEIGHT> z_buffer;
+        std::array<RGB, WIDTH * HEIGHT> img;
+
+        Image();
+        void draw(SDL_Renderer* renderer) const;
+        void set_pixel(uint x, uint y, float z, RGB& color);
+        float check_depth(uint x, uint y);
+        void reset();
 };
 
 class TranslationM4D: public M4D {
@@ -73,8 +89,7 @@ class Triangle {
                  const RGB cb,
                  const RGB cc) : a{a}, b{b}, c{c}, ca{ca}, cb{cb}, cc{cc} {};
         V3D to_barycentric(const V2D& p) const;
-        void render(SDL_Renderer* renderer,
-                    std::array<float, WIDTH * HEIGHT>& z_buffer);
+        void render(Image& img);
 };
 
 #endif // GFX_H

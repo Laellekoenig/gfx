@@ -9,11 +9,20 @@ void Mesh::add(Triangle t) {
     mesh.emplace_back(t);
 }
 
-void Mesh::render(SDL_Renderer* renderer) {
-    std::array<float, WIDTH * HEIGHT> z_buffer;
-    z_buffer.fill(FLT_MAX);
+void Mesh::render(Image& img) {
+    for (Triangle t : mesh)
+        t.render(img);
+}
 
-    for (Triangle t : mesh) t.render(renderer, z_buffer);
+void Mesh::render_threaded(Image& img) {
+    std::vector<std::thread> pool(10);
+
+    for (uint i = 0; i < mesh.size(); i++)
+        pool.emplace_back(std::thread(&Triangle::render, mesh[i], std::ref(img)));
+
+    for (auto& th : pool)
+        if (th.joinable())
+            th.join();
 }
 
 void Mesh::apply(const M4D& m) {

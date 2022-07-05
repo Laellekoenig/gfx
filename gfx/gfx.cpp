@@ -1,4 +1,5 @@
 #include "gfx.hpp"
+#include <cfloat>
 
 // 2D coordinates to 1D array index
 #define TO_INDEX(X, Y) (X + Y * WIDTH)
@@ -23,6 +24,51 @@ RGB& RGB::operator+=(const RGB& other) {
     g += other.g;
     b += other.b;
     return *this;
+}
+
+uint RGB::to_int() const {
+    return (r << 16) + (g << 8) + b;
+}
+
+Image::Image() {
+    z_buffer.fill(FLT_MAX);
+    img.fill(BLACK);
+}
+
+void Image::draw(SDL_Renderer* renderer) const {
+    SDL_Surface* surf = SDL_CreateRGBSurface(0, HEIGHT, WIDTH, 32, 0, 0, 0, 0);
+    uint* pixels = (uint*) surf->pixels;
+
+    for (uint i = 0; i < img.size(); i++) {
+        RGB color = img[i];
+        pixels[i] = color.to_int();
+    }
+
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surf);
+    SDL_FreeSurface(surf);
+    SDL_Rect screen_rect = {0, 0, WIDTH, HEIGHT};
+
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, tex, nullptr, &screen_rect);
+    SDL_RenderPresent(renderer);
+}
+
+void Image::set_pixel(uint x, uint y, float z, RGB& c) {
+    std::lock_guard<std::mutex> guard(draw_mutex);
+    uint idx = x + WIDTH * y;
+    z_buffer[idx] = z;
+    img[idx] = c;
+}
+
+float Image::check_depth(uint x, uint y) {
+    std::lock_guard<std::mutex> guard(draw_mutex);
+    return z_buffer[x + WIDTH * y];
+}
+
+void Image::reset() {
+    std::lock_guard<std::mutex> guard(draw_mutex);
+    img.fill(BLACK);
+    z_buffer.fill(FLT_MAX);
 }
 
 TranslationM4D::TranslationM4D(const float x, const float y, const float z) {
@@ -97,8 +143,7 @@ V3D Triangle::to_barycentric(const V2D& p) const {
     return V3D(lambdas.x, lambdas.y, 1 - lambdas.x - lambdas.y);
 }
 
-void Triangle::render(SDL_Renderer* renderer,
-                      std::array<float, WIDTH * HEIGHT>& z_buffer) {
+void Triangle::render(Image& img) {
     // get pixel coordinates
     a.dehomo();
     b.dehomo();
@@ -122,13 +167,11 @@ void Triangle::render(SDL_Renderer* renderer,
 
             // check z buffer
             float z = a.z * bar.x + b.z * bar.y + c.z * bar.z;
-            if (z < z_buffer[TO_INDEX(x, y)]) {
-                z_buffer[TO_INDEX(x, y)] = z;
+            if (z < img.check_depth(x, y)) {
 
                 // interpolate color
                 RGB color = ca * bar.x + cb * bar.y + cc * bar.z;
-                SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-                SDL_RenderDrawPoint(renderer, x, y);
+                img.set_pixel(x, y, z, color);
             }
         }
     }

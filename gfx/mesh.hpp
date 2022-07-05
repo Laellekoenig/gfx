@@ -11,7 +11,8 @@ class Mesh {
 
         Mesh();
         void add(Triangle t);
-        void render(SDL_Renderer* renderer);
+        void render(Image& img);
+        void render_threaded(Image& img);
         void apply(const M4D& m);
 };
 

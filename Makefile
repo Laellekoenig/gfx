@@ -1,7 +1,7 @@
 SDLINC = -I sdl2/include
 SDLLINK = -L sdl2/lib -l SDL2-2.0.0
 COMP = g++
-FLAGS = -g -std=c++17
+FLAGS = -g -std=c++17 -pthread
 
 sdl: main.o mesh.o gfx.o linalg.o pch.o
 	$(COMP) $(FLAGS) main.o mesh.o gfx.o linalg.o pch.o -o sdl $(SDLLINK)
