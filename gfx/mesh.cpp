@@ -1,7 +1,5 @@
-#include "mesh.h"
-#include "gfx.h"
-#include <limits>
-#include <array>
+#include "mesh.hpp"
+#include "gfx.hpp"
 
 Mesh::Mesh() {
     mesh = std::vector<Triangle>();

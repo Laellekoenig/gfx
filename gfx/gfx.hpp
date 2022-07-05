@@ -1,9 +1,9 @@
 #ifndef GFX_H
 #define GFX_H
 
-#include <SDL2/SDL.h>
-#include <array>
-#include "linalg.h"
+#include "../sdl2/SDL2/SDL.h"
+#include "pch.hpp"
+#include "linalg.hpp"
 
 #define HEIGHT 600
 #define WIDTH 600

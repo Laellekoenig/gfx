@@ -1,5 +1,4 @@
-#include "gfx.h"
-#include <math.h>
+#include "gfx.hpp"
 
 // 2D coordinates to 1D array index
 #define TO_INDEX(X, Y) (X + Y * WIDTH)
@@ -79,7 +78,7 @@ ProjectionM4D::ProjectionM4D() {
     float fov = 90.0;
     float fov_tan = 1.0 / tan(fov * 0.5 / 180.0 * M_PI);
 
-    data[0] = (HEIGHT / WIDTH) * fov_tan;
+    data[0] = ((float) HEIGHT / WIDTH) * fov_tan;
     data[5] = fov_tan;
     data[10] = f_far / f_delta;
     data[14] = (-f_far * f_near) / f_delta;

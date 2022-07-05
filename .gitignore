@@ -1,5 +1,6 @@
 sdl
 *.DS_Store
+sdl2/*
 
 # Prerequisites
 *.d

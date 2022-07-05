@@ -1,6 +1,5 @@
-#include "linalg.h"
-#include "gfx.h"
-#include <algorithm>
+#include "linalg.hpp"
+#include "gfx.hpp"
 
 V3D& V3D::translate_origin(const int width, const int height) {
     x = x * -1 + width * 0.5;

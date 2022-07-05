@@ -1,7 +1,7 @@
-#include <SDL2/SDL.h>
-#include "gfx.h"
-#include "mesh.h"
-#include <math.h>
+#include "sdl2/SDL2/SDL.h"
+#include "gfx/pch.hpp"
+#include "gfx/gfx.hpp"
+#include "gfx/mesh.hpp"
 
 #define INTERVAL 16 // ~60 FPS
 

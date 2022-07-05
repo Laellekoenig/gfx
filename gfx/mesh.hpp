@@ -1,9 +1,9 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <vector>
-#include <SDL2/SDL.h>
-#include "gfx.h"
+#include "../sdl2/SDL2/SDL.h"
+#include "pch.hpp"
+#include "gfx.hpp"
 
 class Mesh {
     public:

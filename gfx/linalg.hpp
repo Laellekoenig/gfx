@@ -1,7 +1,7 @@
 #ifndef LINALG_H
 #define LINALG_H
 
-#include <array>
+#include "pch.hpp"
 
 // Triangle in gfx.h
 class Triangle;
