@@ -27,6 +27,8 @@ class V3D {
         V3D operator/(const float c) const;
         V3D& operator/=(const float c);
         void operator=(const V3D& other);
+        V3D& normalize();
+        float dot(const V3D& other) const;
 };
 
 class V4D {
@@ -43,6 +45,7 @@ class V4D {
             const float w = 1) : x{x}, y{y}, z{z}, w{w} {};
         V4D& dehomo();
         V4D& translate_origin(const int width, const int height);
+        V4D operator-(const V4D& other) const;
 };
 
 class M4D {

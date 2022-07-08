@@ -24,6 +24,19 @@ void V3D::operator=(const V3D& other) {
     z = other.z;
 }
 
+V3D& V3D::normalize() {
+    float len = sqrtf(x * x + y * y + z * z);
+    x /= len;
+    y /= len;
+    z /= len;
+
+    return *this;
+}
+
+float V3D::dot(const V3D& other) const {
+    return x * other.x + y * other.y + z * other.z;
+}
+
 V4D& V4D::dehomo() {
     if (w != 0) {
         x /= w;
@@ -38,6 +51,13 @@ V4D& V4D::translate_origin(const int height, const int width) {
     x = x * -1 + width * 0.5;
     y = y * -1 + height * 0.5;
     return *this;
+}
+
+V4D V4D::operator-(const V4D& other) const {
+    return V4D(x - other.x,
+               y - other.y,
+               z - other.z,
+               w - other.w);
 }
 
 M4D::M4D() {
@@ -75,10 +95,10 @@ M4D M4D::operator*(const M4D& m) const {
     o.data[10] = data[8] * m.data[2] + data[9] * m.data[6] + data[10] * m.data[10] + data[11] * m.data[14];
     o.data[11] = data[8] * m.data[3] + data[9] * m.data[7] + data[10] * m.data[11] + data[11] * m.data[15];
 
-    o.data[12] = data[12] * m.data[0] + data[13] * m.data[4] + this->data[14] * m.data[8] + data[15] * m.data[12];
-    o.data[13] = data[12] * m.data[1] + data[13] * m.data[5] + this->data[14] * m.data[9] + data[15] * m.data[13];
-    o.data[14] = data[12] * m.data[2] + data[13] * m.data[6] + this->data[14] * m.data[10] + data[15] * m.data[14];
-    o.data[15] = data[12] * m.data[3] + data[13] * m.data[7] + this->data[14] * m.data[11] + data[15] * m.data[15];
+    o.data[12] = data[12] * m.data[0] + data[13] * m.data[4] + data[14] * m.data[8] + data[15] * m.data[12];
+    o.data[13] = data[12] * m.data[1] + data[13] * m.data[5] + data[14] * m.data[9] + data[15] * m.data[13];
+    o.data[14] = data[12] * m.data[2] + data[13] * m.data[6] + data[14] * m.data[10] + data[15] * m.data[14];
+    o.data[15] = data[12] * m.data[3] + data[13] * m.data[7] + data[14] * m.data[11] + data[15] * m.data[15];
 
     return o;
 }

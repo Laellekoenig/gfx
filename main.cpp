@@ -31,7 +31,7 @@ void update() {
                     RotationM4D(theta2, Direction::X) *
                     TranslationM4D(-0.5, -0.5, -0.5);
     pyramid.apply(transform);
-    theta += 0.025;
+    theta += 0.005;
     theta2 += 0.0125;
     if (theta > 2 * M_PI) theta = 0;
     if (theta2 > 2 * M_PI) theta2 = 0;
@@ -45,7 +45,7 @@ void update() {
 
 void render(SDL_Renderer* renderer) {
 
-    cube.render(img);
+    //cube.render(img);
     pyramid.render(img);
     //pyramid.render_threaded(img);
 

@@ -37,7 +37,7 @@ class RGB {
 
 class Image {
     private:
-        std::mutex draw_mutex;
+        static std::mutex image_mutex;
 
     public:
         std::array<float, WIDTH * HEIGHT> z_buffer;
@@ -90,6 +90,7 @@ class Triangle {
                  const RGB cc) : a{a}, b{b}, c{c}, ca{ca}, cb{cb}, cc{cc} {};
         V3D to_barycentric(const V2D& p) const;
         void render(Image& img);
+        V3D get_normal() const;
 };
 
 #endif // GFX_H

@@ -1,5 +1,7 @@
 #include "gfx.hpp"
+#include "linalg.hpp"
 #include <cfloat>
+#include <iostream>
 
 // 2D coordinates to 1D array index
 #define TO_INDEX(X, Y) (X + Y * WIDTH)
@@ -53,20 +55,22 @@ void Image::draw(SDL_Renderer* renderer) const {
     SDL_RenderPresent(renderer);
 }
 
+std::mutex Image::image_mutex;
+
 void Image::set_pixel(uint x, uint y, float z, RGB& c) {
-    std::lock_guard<std::mutex> guard(draw_mutex);
+    std::lock_guard<std::mutex> guard(image_mutex);
     uint idx = x + WIDTH * y;
     z_buffer[idx] = z;
     img[idx] = c;
 }
 
 float Image::check_depth(uint x, uint y) {
-    std::lock_guard<std::mutex> guard(draw_mutex);
+    std::lock_guard<std::mutex> guard(image_mutex);
     return z_buffer[x + WIDTH * y];
 }
 
 void Image::reset() {
-    std::lock_guard<std::mutex> guard(draw_mutex);
+    std::lock_guard<std::mutex> guard(image_mutex);
     img.fill(BLACK);
     z_buffer.fill(FLT_MAX);
 }
@@ -171,8 +175,26 @@ void Triangle::render(Image& img) {
 
                 // interpolate color
                 RGB color = ca * bar.x + cb * bar.y + cc * bar.z;
+
+                // get triangle normal and calculate lighting
+                // TODO: make light direction a parameter of function
+                V3D normal = this->get_normal();
+                float light_product = normal.dot(V3D(0, 0, -1).normalize());
+                color *= light_product;
+
+                // draw
                 img.set_pixel(x, y, z, color);
             }
         }
     }
+}
+
+V3D Triangle::get_normal() const {
+    V4D u = b - a;
+    V4D v = c - a;
+
+    // cross product u x v
+    return V3D(u.y * v.z - u.z * v.y,
+               u.z * v.x - u.x * v.z,
+               u.x * v.y - u.y * v.x).normalize();
 }
